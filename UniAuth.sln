@@ -3,7 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniAuth.Api", "Api\UniAuth.Api.csproj", "{F9F5D9AC-6469-4BCF-836A-27EFAA26026D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniAuth.Api", "UniAuth.Api\UniAuth.Api.csproj", "{F9F5D9AC-6469-4BCF-836A-27EFAA26026D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DB5F5A98-42B3-4B84-A1DF-DF6A28C7DBAE} = {DB5F5A98-42B3-4B84-A1DF-DF6A28C7DBAE}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniAuth.Domain", "UniAuth.Domain\UniAuth.Domain.csproj", "{DB5F5A98-42B3-4B84-A1DF-DF6A28C7DBAE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniAuth.Infra", "UniAuth.Infra\UniAuth.Infra.csproj", "{D3B6CC7E-4BBC-493D-95E2-B93B9F0C6C8A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +22,14 @@ Global
 		{F9F5D9AC-6469-4BCF-836A-27EFAA26026D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9F5D9AC-6469-4BCF-836A-27EFAA26026D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9F5D9AC-6469-4BCF-836A-27EFAA26026D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB5F5A98-42B3-4B84-A1DF-DF6A28C7DBAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB5F5A98-42B3-4B84-A1DF-DF6A28C7DBAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB5F5A98-42B3-4B84-A1DF-DF6A28C7DBAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB5F5A98-42B3-4B84-A1DF-DF6A28C7DBAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3B6CC7E-4BBC-493D-95E2-B93B9F0C6C8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3B6CC7E-4BBC-493D-95E2-B93B9F0C6C8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3B6CC7E-4BBC-493D-95E2-B93B9F0C6C8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3B6CC7E-4BBC-493D-95E2-B93B9F0C6C8A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
