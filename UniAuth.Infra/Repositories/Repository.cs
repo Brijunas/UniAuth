@@ -3,18 +3,18 @@ using UniAuth.Infra.Database;
 
 namespace UniAuth.Infra.Repositories
 {
-    internal class Repository<T>
+    internal class Repository<TModel> where TModel : class
     {
-        protected readonly IMongoCollection<T> collection;
+        protected readonly IMongoCollection<TModel> collection;
 
         public Repository(IMongoContext mongoContext)
         {
-            collection = mongoContext.Database.GetCollection<T>($"{typeof(T).Name}s");
+            collection = mongoContext.Database.GetCollection<TModel>($"{typeof(TModel).Name}s");
         }
 
         public Repository(IMongoContext mongoContext, string collectionName)
         {
-            collection = mongoContext.Database.GetCollection<T>(collectionName);
+            collection = mongoContext.Database.GetCollection<TModel>(collectionName);
         }
     }
 }
