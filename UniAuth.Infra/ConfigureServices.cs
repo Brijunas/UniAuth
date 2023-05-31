@@ -11,7 +11,7 @@ namespace UniAuth.Infra
         public static IServiceCollection AddInfraServices(this IServiceCollection services)
         {
             services.AddSingleton<IMongoContext, MongoContext>();
-            services.AddScoped<IUsernamesRepository, UsernamesRepository>();
+            services.AddScoped<IUsernamesAuthRepository, UsernamesAuthRepository>();
             services.AddScoped<IUsersRepository, UsersRepository>();
 
             return services;

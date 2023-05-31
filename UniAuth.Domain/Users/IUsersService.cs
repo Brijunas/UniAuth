@@ -1,6 +1,7 @@
 ﻿namespace UniAuth.Domain.Users
 {
-    public interface IUsersService
+    internal interface IUsersService
     {
+        Task<User> Create(string usernameAuthId, CancellationToken cancellationToken = default);
     }
 }
