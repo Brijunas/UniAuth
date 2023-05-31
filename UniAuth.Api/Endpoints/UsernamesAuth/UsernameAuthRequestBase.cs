@@ -1,4 +1,4 @@
-﻿namespace Api.Endpoints.UsernameAuth
+﻿namespace Api.Endpoints.UsernamesAuth
 {
     public class UsernameAuthRequestBase
     {

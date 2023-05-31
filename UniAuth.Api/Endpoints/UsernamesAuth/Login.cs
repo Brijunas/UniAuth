@@ -1,7 +1,7 @@
 ﻿using Ardalis.ApiEndpoints;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Endpoints.UsernameAuth
+namespace Api.Endpoints.UsernamesAuth
 {
     public class Login : EndpointBaseAsync
         .WithRequest<LoginUsernameAuthRequest>

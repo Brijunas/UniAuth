@@ -1,8 +1,18 @@
 using Api.Helpers;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using UniAuth.Domain;
+using UniAuth.Infra;
+using UniAuth.Infra.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Reading configuration
+builder.Services.Configure<MongoContextSettings>(
+    builder.Configuration.GetSection(nameof(MongoContextSettings)));
+
+// Add services to the container.
+builder.Services.AddInfraServices();
+builder.Services.AddDomainServices();
 builder.Services.AddControllers(options =>
 {
     // Catch all endpoints.
@@ -15,7 +25,6 @@ builder.Services.AddControllers(options =>
     options.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseParameterTransformer()));
 });
 
-// Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
