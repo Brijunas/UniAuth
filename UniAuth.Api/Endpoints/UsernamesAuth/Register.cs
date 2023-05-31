@@ -18,8 +18,7 @@ namespace Api.Endpoints.UsernamesAuth
         [HttpPost("[controller]")]
         public override async Task<ActionResult> HandleAsync(RegisterUsernameAuthRequest request, CancellationToken cancellationToken = default)
         {
-            var usernameAuth = new UsernameAuth { Username = request.Username, Password = request.Password };
-            var isSuccess = await usernamesAuthService.Register(usernameAuth, cancellationToken);
+            var isSuccess = await usernamesAuthService.Register(request.Username, request.Password, cancellationToken);
             return isSuccess ? Ok() : BadRequest();
         }
     }

@@ -5,7 +5,7 @@ namespace UniAuth.Infra.Repositories
 {
     internal class Repository<TModel> where TModel : class
     {
-        protected readonly IMongoCollection<TModel> collection;
+        private protected readonly IMongoCollection<TModel> collection;
 
         public Repository(IMongoContext mongoContext)
         {

@@ -1,4 +1,5 @@
 ﻿using UniAuth.Domain.Users;
+using BC = BCrypt.Net.BCrypt;
 
 namespace UniAuth.Domain.UsernamesAuth
 {
@@ -13,9 +14,16 @@ namespace UniAuth.Domain.UsernamesAuth
             this.usersService = usersService;
         }
 
-        public Task<bool> Register(UsernameAuth usernameAuth, CancellationToken cancellationToken = default)
+        public Task<bool> Register(string username, string password, CancellationToken cancellationToken = default)
         {
             // Create a usernames authentication for a user.
+            var usernameAuth = new UsernameAuth
+            {
+                // Ensure username is lowercase.
+                Username = username.ToLower(),
+                // Hash the password.
+                Password = BC.HashPassword(password)
+            };
             usernamesAuthRepository.Create(usernameAuth, cancellationToken);
             if (usernameAuth.Id is null)
                 return Task.FromResult(false);

@@ -2,6 +2,6 @@
 {
     public interface IUsernamesAuthService
     {
-        Task<bool> Register(UsernameAuth usernameAuth, CancellationToken cancellationToken = default);
+        Task<bool> Register(string username, string password, CancellationToken cancellationToken = default);
     }
 }
