@@ -1,19 +1,15 @@
-﻿using MongoDB.Driver;
-using UniAuth.Domain.UsernamesAuth;
+﻿using UniAuth.Domain.UsernamesAuth;
 using UniAuth.Infra.Database;
 
 namespace UniAuth.Infra.Repositories
 {
-    internal class UsernamesAuthRepository : IUsernamesAuthRepository
+    internal class UsernamesAuthRepository : Repository<UsernameAuth>, IUsernamesAuthRepository
     {
-        private readonly IMongoCollection<UsernameAuth> usernamesAuthCollection;
-
-        public UsernamesAuthRepository(IMongoContext mongoContext)
+        public UsernamesAuthRepository(IMongoContext mongoContext) : base(mongoContext, "UsernamesAuth")
         {
-            usernamesAuthCollection = mongoContext.Database.GetCollection<UsernameAuth>("UsernamesAuth");
         }
 
         public Task Create(UsernameAuth usernameAuth, CancellationToken cancellationToken = default) =>
-            usernamesAuthCollection.InsertOneAsync(usernameAuth, cancellationToken: cancellationToken);
+            collection.InsertOneAsync(usernameAuth, cancellationToken: cancellationToken);
     }
 }
