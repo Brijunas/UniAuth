@@ -2,7 +2,7 @@
 {
     public class UsernameAuthRequestBase
     {
-        public required string Username { get; set; }
-        public required string Password { get; set; }
+        public required virtual string Username { get; set; }
+        public required virtual string Password { get; set; }
     }
 }
