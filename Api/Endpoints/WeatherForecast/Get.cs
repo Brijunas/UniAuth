@@ -7,7 +7,7 @@ namespace Api.Endpoints.WeatherForecast
         .WithoutRequest
         .WithActionResult<GetWeatherForecastResult[]>
     {
-        [HttpGet("api/[namespace]/[controller]")]
+        [HttpGet("[controller]")]
         public override ActionResult<GetWeatherForecastResult[]> Handle()
         {
             var summaries = new[]
