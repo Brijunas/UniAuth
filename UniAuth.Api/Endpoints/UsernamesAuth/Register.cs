@@ -18,8 +18,23 @@ namespace Api.Endpoints.UsernamesAuth
         [HttpPost("[controller]")]
         public override async Task<ActionResult> HandleAsync([FromBody] RegisterUsernameAuthRequest request, CancellationToken cancellationToken = default)
         {
-            var isSuccess = await usernamesAuthService.Register(request.Username, request.Password, cancellationToken);
-            return isSuccess ? Ok() : BadRequest();
+            try
+            {
+                await usernamesAuthService.Register(request.Username, request.Password, cancellationToken);
+                return Ok();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred." });
+            }
         }
     }
 }

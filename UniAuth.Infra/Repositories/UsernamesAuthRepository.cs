@@ -19,7 +19,7 @@ namespace UniAuth.Infra.Repositories
             catch (MongoWriteException e)
             {
                 if (e.WriteError.Category == ServerErrorCategory.DuplicateKey)
-                    throw new Exception($"User {usernameAuth.Username} already exist.", e);
+                    throw new ArgumentException($"Username {usernameAuth.Username} already exist.");
 
                 throw;
             }
