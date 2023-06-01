@@ -14,7 +14,7 @@ namespace UniAuth.Domain.UsernamesAuth
             this.usersService = usersService;
         }
 
-        public Task<bool> Register(string username, string password, CancellationToken cancellationToken = default)
+        public async Task<bool> Register(string username, string password, CancellationToken cancellationToken = default)
         {
             // Create a usernames authentication for a user.
             var usernameAuth = new UsernameAuth
@@ -24,13 +24,13 @@ namespace UniAuth.Domain.UsernamesAuth
                 // Hash the password.
                 Password = BC.HashPassword(password)
             };
-            usernamesAuthRepository.Create(usernameAuth, cancellationToken);
+            await usernamesAuthRepository.Create(usernameAuth, cancellationToken);
             if (usernameAuth.Id is null)
-                return Task.FromResult(false);
+                return false;
 
             // Create a user with usernames authentication.
-            var user = usersService.Create(usernameAuth.Id, cancellationToken);
-            return Task.FromResult(user?.Id is not null);
+            var user = await usersService.Create(usernameAuth.Id, cancellationToken);
+            return user?.Id is not null;
         }
     }
 }
