@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using System.Security.Authentication;
 using UniAuth.Domain.UsernamesAuth;
 using UniAuth.Infra.Database;
 
@@ -23,6 +24,13 @@ namespace UniAuth.Infra.Repositories
 
                 throw;
             }
+        }
+
+        public async Task<UsernameAuth?> Get(string username, CancellationToken cancellationToken = default)
+        {
+            var usernamesAuth = await collection.FindAsync(f => f.Username == username, cancellationToken: cancellationToken);
+            var singleUsernameAuth = await usernamesAuth.SingleOrDefaultAsync(cancellationToken: cancellationToken);
+            return singleUsernameAuth is not null ? singleUsernameAuth : throw new InvalidCredentialException();
         }
 
         // Ensure index for username is unique.

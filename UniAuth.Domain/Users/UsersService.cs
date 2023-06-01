@@ -15,5 +15,10 @@
             usersRepository.Create(user, cancellationToken);
             return Task.FromResult(user);
         }
+
+        public Task<User> Get(string usernameAuthId, CancellationToken cancellationToken = default)
+        {
+            return usersRepository.Get(usernameAuthId, cancellationToken);
+        }
     }
 }
