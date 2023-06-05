@@ -11,13 +11,6 @@ namespace UniAuth.Infra.Repositories
         {
         }
 
-        /// <summary>
-        /// Create a username authentication.
-        /// </summary>
-        /// <param name="usernameAuth"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException">If authentication exist.</exception>
         public async Task Create(UsernameAuth usernameAuth, CancellationToken cancellationToken = default)
         {
             try
