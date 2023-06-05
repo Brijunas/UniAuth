@@ -2,10 +2,7 @@
 {
     public class KebabCaseParameterTransformer : IOutboundParameterTransformer
     {
-        public string? TransformOutbound(object? value)
-        {
-            var stringValue = value?.ToString();
-            return StringUtils.ToKebabCase(stringValue);
-        }
+        public string? TransformOutbound(object? value) =>
+            StringUtils.ToKebabCase(value?.ToString());
     }
 }
