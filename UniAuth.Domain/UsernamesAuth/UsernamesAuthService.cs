@@ -21,11 +21,7 @@ namespace UniAuth.Domain.UsernamesAuth
 
             // Fetch the user authentication.
             var usernameAuth = await usernamesAuthRepository.Get(lowerUsername, cancellationToken);
-            if (usernameAuth is null || usernameAuth.Id is null)
-                throw new InvalidCredentialException();
-
-            // Verify the password.
-            if (!BC.Verify(password, usernameAuth.Password))
+            if (usernameAuth is null || usernameAuth.Id is null || !BC.Verify(password, usernameAuth.Password))
                 throw new InvalidCredentialException();
 
             // Fetch the user.

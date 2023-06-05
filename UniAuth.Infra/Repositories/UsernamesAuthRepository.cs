@@ -11,6 +11,13 @@ namespace UniAuth.Infra.Repositories
         {
         }
 
+        /// <summary>
+        /// Create a username authentication.
+        /// </summary>
+        /// <param name="usernameAuth"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">If authentication exist.</exception>
         public async Task Create(UsernameAuth usernameAuth, CancellationToken cancellationToken = default)
         {
             try
@@ -26,12 +33,8 @@ namespace UniAuth.Infra.Repositories
             }
         }
 
-        public async Task<UsernameAuth?> Get(string username, CancellationToken cancellationToken = default)
-        {
-            var usernamesAuth = await collection.FindAsync(f => f.Username == username, cancellationToken: cancellationToken);
-            var singleUsernameAuth = await usernamesAuth.SingleOrDefaultAsync(cancellationToken: cancellationToken);
-            return singleUsernameAuth is not null ? singleUsernameAuth : throw new InvalidCredentialException();
-        }
+        public Task<UsernameAuth> Get(string username, CancellationToken cancellationToken = default) =>
+            collection.Find(f => f.Username == username).SingleOrDefaultAsync(cancellationToken);
 
         // Ensure index for username is unique.
         // Need proper implementation for this.

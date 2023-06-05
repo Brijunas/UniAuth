@@ -18,7 +18,8 @@
 
         public Task<User> Get(string usernameAuthId, CancellationToken cancellationToken = default)
         {
-            return usersRepository.Get(usernameAuthId, cancellationToken);
+            var user = usersRepository.Get(usernameAuthId, cancellationToken);
+            return user is not null ? user : throw new KeyNotFoundException("User not found.");
         }
     }
 }
