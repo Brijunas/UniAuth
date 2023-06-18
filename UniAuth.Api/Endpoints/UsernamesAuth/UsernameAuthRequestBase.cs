@@ -1,8 +1,8 @@
 ﻿namespace Api.Endpoints.UsernamesAuth
 {
-    public class UsernameAuthRequestBase
+    public abstract class UsernameAuthRequestBase
     {
-        public required virtual string Username { get; set; }
-        public required virtual string Password { get; set; }
+        public required abstract string Username { get; set; }
+        public required abstract string Password { get; set; }
     }
 }
