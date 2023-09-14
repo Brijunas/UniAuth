@@ -1,5 +1,8 @@
 using Api.Helpers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using UniAuth.Api.Settings;
 using UniAuth.Domain;
 using UniAuth.Infra;
@@ -10,6 +13,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Reading configuration
 builder.Services.Configure<MongoContextSettings>(
     builder.Configuration.GetSection(nameof(MongoContextSettings)));
+
+var jwt = builder.Configuration.GetSection(nameof(Jwt));
+builder.Services.Configure<Jwt>(jwt);
 
 var urls = builder.Configuration.GetSection(nameof(Urls));
 builder.Services.Configure<Urls>(urls);
@@ -34,15 +40,35 @@ builder.Services.AddCors(options =>
     var frontEndUrl = urls.GetValue<string>(nameof(Urls.Frontend));
     if (frontEndUrl is not null)
     {
-        options.AddDefaultPolicy(builder =>
+        options.AddDefaultPolicy(builderPolicy =>
         {
-            builder.WithOrigins(frontEndUrl)
+            builderPolicy.WithOrigins(frontEndUrl)
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
         });
     }
 });
+
+// JWT Authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        var jwtSettings = jwt.GetValue<Jwt>(nameof(Jwt));
+        if (jwtSettings is not null)
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtSettings.Issuer,
+                ValidAudience = jwtSettings.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
+            };
+        }
+    });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -57,10 +83,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors();
 app.UseHttpsRedirection();
-
-// Catch all endpoints.
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseCors();
 app.MapControllers();
-
 app.Run();
