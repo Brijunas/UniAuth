@@ -1,6 +1,6 @@
-﻿namespace UniAuth.Api.Settings
+﻿namespace UniAuth.Infra.Auth
 {
-    public class Jwt
+    public class JwtSettings
     {
         public required string Issuer { get; set; }
         public required string Audience { get; set; }

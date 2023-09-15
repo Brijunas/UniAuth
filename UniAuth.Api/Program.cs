@@ -6,6 +6,7 @@ using System.Text;
 using UniAuth.Api.Settings;
 using UniAuth.Domain;
 using UniAuth.Infra;
+using UniAuth.Infra.Auth;
 using UniAuth.Infra.Database;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,8 +15,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<MongoContextSettings>(
     builder.Configuration.GetSection(nameof(MongoContextSettings)));
 
-var jwt = builder.Configuration.GetSection(nameof(Jwt));
-builder.Services.Configure<Jwt>(jwt);
+var jwtSettings = builder.Configuration.GetSection(nameof(JwtSettings));
+builder.Services.Configure<JwtSettings>(jwtSettings);
 
 var urls = builder.Configuration.GetSection(nameof(Urls));
 builder.Services.Configure<Urls>(urls);
@@ -54,15 +55,15 @@ builder.Services.AddCors(options =>
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        var jwtSettings = jwt.GetValue<Jwt>(nameof(Jwt));
-        if (jwtSettings is not null)
+        var jwt = jwtSettings.GetValue<JwtSettings>(nameof(JwtSettings));
+        if (jwt is not null)
         {
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtSettings.Issuer,
-                ValidAudience = jwtSettings.Audience,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
+                ValidIssuer = jwt.Issuer,
+                ValidAudience = jwt.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key)),
             };
         }
     });

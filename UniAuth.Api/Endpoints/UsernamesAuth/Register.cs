@@ -1,5 +1,6 @@
 ﻿using Ardalis.ApiEndpoints;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using UniAuth.Domain.UsernamesAuth;
 
 namespace Api.Endpoints.UsernamesAuth
@@ -20,20 +21,20 @@ namespace Api.Endpoints.UsernamesAuth
         {
             try
             {
-                await usernamesAuthService.Register(request.Username, request.Password, cancellationToken);
-                return Ok();
+                var result = await usernamesAuthService.Register(request.Username, request.Password, cancellationToken);
+                return Ok(result);
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return StatusCode((int)HttpStatusCode.InternalServerError, new { message = ex.Message });
             }
             catch (InvalidOperationException ex)
             {
-                return StatusCode(500, new { message = ex.Message });
+                return StatusCode((int)HttpStatusCode.InternalServerError, new { message = ex.Message });
             }
             catch (Exception)
             {
-                return StatusCode(500, new { message = "An unexpected error occurred." });
+                return StatusCode((int)HttpStatusCode.InternalServerError, new { message = "An unexpected error occurred." });
             }
         }
     }

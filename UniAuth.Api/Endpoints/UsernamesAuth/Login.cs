@@ -1,5 +1,6 @@
 ﻿using Ardalis.ApiEndpoints;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using System.Security.Authentication;
 using UniAuth.Domain.UsernamesAuth;
 
@@ -22,8 +23,8 @@ namespace Api.Endpoints.UsernamesAuth
         {
             try
             {
-                await usernamesAuthService.Login(request.Username, request.Password, cancellationToken);
-                return Ok();
+                var result = await usernamesAuthService.Login(request.Username, request.Password, cancellationToken);
+                return Ok(result);
             }
             catch (InvalidCredentialException)
             {
@@ -33,9 +34,13 @@ namespace Api.Endpoints.UsernamesAuth
             {
                 return NotFound(new { message = ex.Message });
             }
+            catch (ArgumentNullException ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, new { message = ex.Message });
+            }
             catch (Exception)
             {
-                return StatusCode(500, new { message = "An unexpected error occurred." });
+                return StatusCode((int)HttpStatusCode.InternalServerError, new { message = "An unexpected error occurred." });
             }
         }
     }

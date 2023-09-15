@@ -1,4 +1,5 @@
 ﻿using System.Security.Authentication;
+using UniAuth.Domain.Auth;
 using UniAuth.Domain.Users;
 using BC = BCrypt.Net.BCrypt;
 
@@ -8,14 +9,16 @@ namespace UniAuth.Domain.UsernamesAuth
     {
         private readonly IUsernamesAuthRepository usernamesAuthRepository;
         private readonly IUsersService usersService;
+        private readonly IJwtService jwtService;
 
-        public UsernamesAuthService(IUsernamesAuthRepository usernamesAuthRepository, IUsersService usersService)
+        public UsernamesAuthService(IUsernamesAuthRepository usernamesAuthRepository, IUsersService usersService, IJwtService jwtService)
         {
             this.usernamesAuthRepository = usernamesAuthRepository;
             this.usersService = usersService;
+            this.jwtService = jwtService;
         }
 
-        public async Task Login(string username, string password, CancellationToken cancellationToken = default)
+        public async Task<AuthenticatedUser> Login(string username, string password, CancellationToken cancellationToken = default)
         {
             var lowerUsername = username.ToLower();
 
@@ -24,11 +27,18 @@ namespace UniAuth.Domain.UsernamesAuth
             if (usernameAuth is null || usernameAuth.Id is null || !BC.Verify(password, usernameAuth.Password))
                 throw new InvalidCredentialException();
 
-            // Fetch the user.
-            await usersService.Get(usernameAuth.Id, cancellationToken);
+            // Fetch the user and create token.
+            var user = await usersService.Get(usernameAuth.Id, cancellationToken);
+            var token = jwtService.CreateToken(user);
+
+            return new AuthenticatedUser
+            {
+                Token = token,
+                User = user
+            };
         }
 
-        public async Task Register(string username, string password, CancellationToken cancellationToken = default)
+        public async Task<AuthenticatedUser> Register(string username, string password, CancellationToken cancellationToken = default)
         {
             var lowerUsername = username.ToLower();
 
@@ -52,6 +62,14 @@ namespace UniAuth.Domain.UsernamesAuth
             var user = await usersService.Create(usernameAuth.Id, cancellationToken);
             if (user?.Id is null)
                 throw new InvalidOperationException("Unable to create user.");
+
+            // Return user and create token.
+            var token = jwtService.CreateToken(user);
+            return new AuthenticatedUser
+            {
+                Token = token,
+                User = user
+            };
         }
     }
 }
