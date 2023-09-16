@@ -1,5 +1,4 @@
 ﻿using System.Security.Authentication;
-using UniAuth.Domain.Auth;
 using UniAuth.Domain.Users;
 using BC = BCrypt.Net.BCrypt;
 
@@ -8,37 +7,32 @@ namespace UniAuth.Domain.UsernamesAuth
     internal class UsernamesAuthService : IUsernamesAuthService
     {
         private readonly IUsernamesAuthRepository usernamesAuthRepository;
-        private readonly IUsersService usersService;
-        private readonly IJwtService jwtService;
+        private readonly IUsersRepository usersRepository;
 
-        public UsernamesAuthService(IUsernamesAuthRepository usernamesAuthRepository, IUsersService usersService, IJwtService jwtService)
+        public UsernamesAuthService(IUsernamesAuthRepository usernamesAuthRepository, IUsersRepository usersRepository)
         {
             this.usernamesAuthRepository = usernamesAuthRepository;
-            this.usersService = usersService;
-            this.jwtService = jwtService;
+            this.usersRepository = usersRepository;
         }
 
-        public async Task<AuthenticatedUser> Login(string username, string password, CancellationToken cancellationToken = default)
+        public async Task<User> Login(string username, string password, CancellationToken cancellationToken = default)
         {
             var lowerUsername = username.ToLower();
 
-            // Fetch the user authentication.
+            // get the user authentication
             var usernameAuth = await usernamesAuthRepository.Get(lowerUsername, cancellationToken);
             if (usernameAuth is null || usernameAuth.Id is null || !BC.Verify(password, usernameAuth.Password))
                 throw new InvalidCredentialException();
 
-            // Fetch the user and create token.
-            var user = await usersService.Get(usernameAuth.Id, cancellationToken);
-            var token = jwtService.CreateToken(user);
+            // get the user
+            var user = await usersRepository.Get(usernameAuth.Id, cancellationToken);
+            if (user?.Id is null)
+                throw new KeyNotFoundException("User not found.");
 
-            return new AuthenticatedUser
-            {
-                Token = token,
-                User = user
-            };
+            return user;
         }
 
-        public async Task<AuthenticatedUser> Register(string username, string password, CancellationToken cancellationToken = default)
+        public async Task<User> Register(string username, string password, CancellationToken cancellationToken = default)
         {
             var lowerUsername = username.ToLower();
 
@@ -59,17 +53,11 @@ namespace UniAuth.Domain.UsernamesAuth
                 throw new InvalidOperationException("Unable to create user authentication.");
 
             // Create a user with usernames authentication.
-            var user = await usersService.Create(usernameAuth.Id, cancellationToken);
+            var user = await usersRepository.Create(usernameAuth.Id, cancellationToken);
             if (user?.Id is null)
                 throw new InvalidOperationException("Unable to create user.");
 
-            // Return user and create token.
-            var token = jwtService.CreateToken(user);
-            return new AuthenticatedUser
-            {
-                Token = token,
-                User = user
-            };
+            return user;
         }
     }
 }

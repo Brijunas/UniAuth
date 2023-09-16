@@ -2,29 +2,39 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Security.Authentication;
+using UniAuth.Api.Endpoints.UsernamesAuth;
 using UniAuth.Domain.UsernamesAuth;
+using UniAuth.Infra.Auth;
 
 namespace Api.Endpoints.UsernamesAuth
 {
     public class Login : EndpointBaseAsync
         .WithRequest<LoginUsernameAuthRequest>
-        .WithActionResult
+        .WithActionResult<UsernameAuthResponseBase>
 
     {
         private readonly IUsernamesAuthService usernamesAuthService;
+        private readonly IJwtService jwtService;
 
-        public Login(IUsernamesAuthService usernamesAuthService)
+        public Login(IUsernamesAuthService usernamesAuthService, IJwtService jwtService)
         {
             this.usernamesAuthService = usernamesAuthService;
+            this.jwtService = jwtService;
         }
 
         [HttpPost("[controller]")]
-        public override async Task<ActionResult> HandleAsync(LoginUsernameAuthRequest request, CancellationToken cancellationToken = default)
+        public override async Task<ActionResult<UsernameAuthResponseBase>> HandleAsync(LoginUsernameAuthRequest request, CancellationToken cancellationToken = default)
         {
             try
             {
-                var result = await usernamesAuthService.Login(request.Username, request.Password, cancellationToken);
-                return Ok(result);
+                var user = await usernamesAuthService.Login(request.Username, request.Password, cancellationToken);
+                var token = jwtService.CreateToken(user);
+
+                return new UsernameAuthResponseBase
+                {
+                    User = user,
+                    Token = token
+                };
             }
             catch (InvalidCredentialException)
             {

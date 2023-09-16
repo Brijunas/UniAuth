@@ -1,8 +1,10 @@
-﻿namespace UniAuth.Domain.UsernamesAuth
+﻿using UniAuth.Domain.Users;
+
+namespace UniAuth.Domain.UsernamesAuth
 {
     public interface IUsernamesAuthService
     {
-        Task<AuthenticatedUser> Register(string username, string password, CancellationToken cancellationToken = default);
-        Task<AuthenticatedUser> Login(string username, string password, CancellationToken cancellationToken = default);
+        Task<User> Register(string username, string password, CancellationToken cancellationToken);
+        Task<User> Login(string username, string password, CancellationToken cancellationToken);
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace UniAuth.Domain.Auth
+﻿namespace UniAuth.Infra.Auth
 {
     public class JwtToken
     {

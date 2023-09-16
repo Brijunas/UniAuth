@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using UniAuth.Domain.Auth;
 using UniAuth.Domain.UsernamesAuth;
 using UniAuth.Domain.Users;
 using UniAuth.Infra.Auth;

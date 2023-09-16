@@ -10,8 +10,12 @@ namespace UniAuth.Infra.Repositories
         {
         }
 
-        public Task Create(User user, CancellationToken cancellationToken = default) =>
-            collection.InsertOneAsync(user, cancellationToken: cancellationToken);
+        public async Task<User> Create(string usernameAuthId, CancellationToken cancellationToken = default)
+        {
+            var newUser = new User { UsernameAuthId = usernameAuthId };
+            await collection.InsertOneAsync(newUser, cancellationToken: cancellationToken);
+            return newUser;
+        }
 
         public Task<User> Get(string usernameAuthId, CancellationToken cancellationToken = default) =>
             collection.Find(f => f.UsernameAuthId == usernameAuthId).SingleOrDefaultAsync(cancellationToken);

@@ -2,7 +2,7 @@
 {
     public interface IUsersRepository
     {
-        Task Create(User user, CancellationToken cancellationToken = default);
-        Task<User> Get(string usernameAuthId, CancellationToken cancellationToken = default);
+        Task<User> Create(string usernameAuthId, CancellationToken cancellationToken);
+        Task<User> Get(string usernameAuthId, CancellationToken cancellationToken);
     }
 }

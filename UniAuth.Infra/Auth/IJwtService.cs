@@ -1,6 +1,6 @@
 ﻿using UniAuth.Domain.Users;
 
-namespace UniAuth.Domain.Auth
+namespace UniAuth.Infra.Auth
 {
     public interface IJwtService
     {
