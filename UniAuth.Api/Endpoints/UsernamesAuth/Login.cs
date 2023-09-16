@@ -28,7 +28,7 @@ namespace Api.Endpoints.UsernamesAuth
             try
             {
                 var user = await usernamesAuthService.Login(request.Username, request.Password, cancellationToken);
-                var token = jwtService.CreateToken(user);
+                var token = jwtService.GenerateToken(user);
 
                 return new UsernameAuthResponseBase
                 {

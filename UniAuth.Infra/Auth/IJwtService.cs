@@ -4,6 +4,6 @@ namespace UniAuth.Infra.Auth
 {
     public interface IJwtService
     {
-        JwtToken CreateToken(User user);
+        string GenerateToken(User user);
     }
 }

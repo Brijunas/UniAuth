@@ -16,33 +16,29 @@ namespace UniAuth.Infra.Auth
             this.settings = settings.Value;
         }
 
-        public JwtToken CreateToken(User user)
+        public string GenerateToken(User user)
         {
             if (string.IsNullOrEmpty(user.Id))
                 throw new ArgumentException();
 
-            var key = Encoding.UTF8.GetBytes(settings.Key);
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.Key));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id)
+                new Claim("sub_id", user.Id)
             };
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-                Issuer = settings.Issuer,
-                Audience = settings.Audience
+                SigningCredentials = credentials
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            return new JwtToken
-            {
-                Key = tokenHandler.WriteToken(token),
-                ValidTo = token.ValidTo
-            };
+            return tokenHandler.WriteToken(token);
         }
     }
 }
