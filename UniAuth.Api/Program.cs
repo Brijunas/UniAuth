@@ -38,36 +38,33 @@ builder.Services.AddControllers(options =>
 
 builder.Services.AddCors(options =>
 {
-    var frontEndUrl = urls.GetValue<string>(nameof(Urls.Frontend));
-    if (frontEndUrl is not null)
-    {
-        options.AddDefaultPolicy(builderPolicy =>
+    var frontEndUrl = urls.GetValue<string>(nameof(Urls.Frontend)) ?? throw new ArgumentNullException(nameof(Urls.Frontend));
+
+    options.AddDefaultPolicy(builderPolicy =>
         {
             builderPolicy.WithOrigins(frontEndUrl)
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
         });
-    }
+
 });
 
 // JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        var jwt = jwtSettings.GetValue<JwtSettings>(nameof(JwtSettings));
-        if (jwt is not null)
+        var key = jwtSettings.GetValue<string>(nameof(JwtSettings.Key)) ?? throw new ArgumentNullException(nameof(JwtSettings.Key));
+
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
+        options.TokenValidationParameters = new TokenValidationParameters
         {
-            options.RequireHttpsMetadata = false;
-            options.SaveToken = true;
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key)),
-                ValidateIssuer = false,
-                ValidateAudience = false
-            };
-        }
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
     });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -84,8 +81,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors();
 app.MapControllers();
 app.Run();
